@@ -24,7 +24,9 @@ deepseek-ai/deepseek-harness (upstream)
 - `origin` = `ltlovezh/deepseek-harness`（我的 fork，`master` / `diy` 都推这里）
 - `upstream` = `deepseek-ai/deepseek-harness`（原始仓库，push 地址已禁用，防止误推）
 
-diy 的全部改动都收在 `learning/` 一个目录里，上游永远不会碰到这个路径，所以 rebase 到新的 `master` 上不会有冲突。
+目前 `diy` 的改动都收在 `learning/` 一个目录里，上游不碰这个路径，所以 rebase 到新的 `master` 上不会冲突。
+
+但这是自律约定而非结构保证：一旦开始直接改上游代码（学习时加打印、插桩都很正常），那些文件在 rebase 时就可能冲突。查当前偏离：`git diff --name-only master..diy | grep -v '^learning/'`，输出为空就是还守着约定。
 
 > 另有两个历史分支：`diy-backup`（diy 的旧快照）和 `claude/deepseek-harness-setup-da681f`。都不参与同步流程，确认无用后可以删掉。
 
