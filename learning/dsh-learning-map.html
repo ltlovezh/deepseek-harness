@@ -1,0 +1,639 @@
+<title>DSH 学习地图</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;700&display=swap">
+<style>
+  :root {
+    --bg: #F4F6F8;
+    --surface: #FFFFFF;
+    --ink: #1B2430;
+    --muted: #5A6878;
+    --line: #D6DDE5;
+    --accent: #2F54D6;
+    --accent-soft: #E9EEFB;
+    --event: #1B7A4B;
+    --event-soft: #E3F2E9;
+    --hook: #A05A00;
+    --hook-soft: #F8EDDC;
+    --abort: #B3372E;
+    --abort-soft: #F8E6E3;
+    --sans: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #10151C; --surface: #171E28; --ink: #E6EBF2; --muted: #92A1B4; --line: #2B3542;
+      --accent: #7E97F2; --accent-soft: #1E2A4A;
+      --event: #4CC38A; --event-soft: #12301F;
+      --hook: #E0A458; --hook-soft: #33270F;
+      --abort: #E5786D; --abort-soft: #3A1A16;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #10151C; --surface: #171E28; --ink: #E6EBF2; --muted: #92A1B4; --line: #2B3542;
+    --accent: #7E97F2; --accent-soft: #1E2A4A;
+    --event: #4CC38A; --event-soft: #12301F;
+    --hook: #E0A458; --hook-soft: #33270F;
+    --abort: #E5786D; --abort-soft: #3A1A16;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: var(--sans); font-size: 16px; line-height: 1.75;
+  }
+  main { max-width: 960px; margin: 0 auto; padding: 56px 24px 96px; }
+
+  .eyebrow {
+    font-family: var(--mono); font-size: 12.5px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--accent); margin: 0 0 10px;
+  }
+  h1 { font-size: clamp(30px, 5vw, 42px); font-weight: 700; line-height: 1.2; margin: 0 0 6px; text-wrap: balance; }
+  h1 .m { font-family: var(--mono); font-weight: 600; }
+  .lede { color: var(--muted); max-width: 44em; margin: 12px 0 0; }
+
+  section { margin-top: 60px; }
+  .secno { font-family: var(--mono); font-size: 12.5px; letter-spacing: 0.14em; color: var(--accent); margin: 0 0 6px; }
+  h2 { font-size: 24px; font-weight: 700; margin: 0 0 14px; text-wrap: balance; }
+  h3 { font-size: 17px; font-weight: 700; margin: 22px 0 8px; }
+  section > p { max-width: 46em; margin: 0 0 14px; }
+  a { color: var(--accent); }
+  code {
+    font-family: var(--mono); font-size: 0.86em; background: var(--surface);
+    border: 1px solid var(--line); border-radius: 5px; padding: 1px 6px; white-space: nowrap;
+  }
+  li code, td code { white-space: normal; word-break: break-all; }
+
+  .kernel, .cmd {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+    padding: 16px 20px; margin: 16px 0;
+    font-family: var(--mono); font-size: 13px; line-height: 1.9; overflow-x: auto;
+  }
+  .kernel pre, .cmd pre { margin: 0; }
+  .cmd .c { color: var(--muted); }
+  .cmd .k { color: var(--accent); }
+
+  /* 进度条 */
+  .progress {
+    position: sticky; top: 0; z-index: 5;
+    background: var(--bg);
+    padding: 10px 0 8px; margin: 0 -4px;
+    border-bottom: 1px solid var(--line);
+    display: flex; align-items: center; gap: 14px;
+    font-size: 13.5px; color: var(--muted);
+  }
+  .progress .bar { flex: 1; height: 8px; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+  .progress .fill { height: 100%; width: 0%; background: var(--event); border-radius: 999px; transition: width .3s; }
+  .progress .count { font-family: var(--mono); white-space: nowrap; }
+
+  /* 路线图 */
+  .figwrap {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+    padding: 20px 16px; overflow-x: auto; margin: 20px 0 8px;
+  }
+  .figwrap svg { display: block; width: 100%; height: auto; min-width: 680px; }
+  figure { margin: 0; }
+  figcaption { font-size: 13.5px; color: var(--muted); margin-top: 10px; max-width: 46em; }
+  .dg text { font-family: var(--sans); font-size: 12.5px; fill: var(--ink); }
+  .dg .m { font-family: var(--mono); }
+  .dg .sub { font-size: 11px; fill: var(--muted); }
+  .dg .phase { font-family: var(--mono); font-size: 11px; fill: var(--accent); letter-spacing: .08em; }
+  .dg .path { stroke: var(--line); stroke-width: 3; fill: none; }
+  .dg .st { fill: var(--surface); stroke: var(--accent); stroke-width: 2; }
+  .dg .st.done { fill: var(--event-soft); stroke: var(--event); }
+  .dg .stno { font-family: var(--mono); font-size: 13px; font-weight: 600; fill: var(--accent); }
+  .dg .st.done + .stno { fill: var(--event); }
+
+  /* 关卡卡片 */
+  .stage {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+    padding: 22px 26px; margin: 22px 0;
+  }
+  .stage-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .stage-badge {
+    font-family: var(--mono); font-size: 12px; color: var(--accent);
+    background: var(--accent-soft); border-radius: 999px; padding: 2px 12px; white-space: nowrap;
+  }
+  .stage-head h3 { margin: 0; font-size: 19px; flex: 1; min-width: 12em; }
+  .stage-time { font-family: var(--mono); font-size: 12px; color: var(--muted); white-space: nowrap; }
+  .stage-done { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); cursor: pointer; user-select: none; white-space: nowrap; }
+  .stage-done input { width: 16px; height: 16px; accent-color: var(--event); cursor: pointer; }
+  .stage .goal { color: var(--muted); margin: 10px 0 0; max-width: 46em; }
+  .stage h4 {
+    font-family: var(--mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--accent); margin: 20px 0 8px;
+  }
+  .stage ul { margin: 0; padding-left: 22px; }
+  .stage li { margin: 5px 0; max-width: 46em; }
+  .stage li strong { font-weight: 700; }
+  .stage .cmd { margin: 10px 0; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .chips span {
+    font-family: var(--mono); font-size: 12px; color: var(--muted);
+    background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 3px 9px;
+  }
+  details.deep { margin-top: 16px; border-top: 1px dashed var(--line); padding-top: 12px; }
+  details.deep summary {
+    cursor: pointer; font-size: 13.5px; color: var(--hook); font-weight: 500; list-style: none;
+  }
+  details.deep summary::before { content: "▸ "; }
+  details.deep[open] summary::before { content: "▾ "; }
+  details.deep ul { margin-top: 8px; }
+  details.deep li { color: var(--muted); font-size: 14px; }
+  .note {
+    background: var(--hook-soft); border: 1px dashed var(--hook); border-radius: 10px;
+    padding: 12px 16px; font-size: 14px; margin: 14px 0; max-width: 46em;
+  }
+  .note b { font-weight: 700; }
+
+  /* 表格 */
+  .tblwrap { overflow-x: auto; margin: 16px 0; }
+  table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 14px; }
+  th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; vertical-align: top; }
+  th { background: var(--surface); font-weight: 700; white-space: nowrap; }
+  td { background: var(--surface); }
+  td:first-child { white-space: nowrap; font-weight: 500; }
+
+  .refs { font-size: 14px; color: var(--muted); }
+  .refs li { margin: 4px 0; }
+  input:focus-visible, summary:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+</style>
+
+<main>
+  <header>
+    <p class="eyebrow">deepseek-harness · learning · 从小白到插件作者</p>
+    <h1><span class="m">DSH</span> 学习地图</h1>
+    <p class="lede">九关、三篇章的递进路线：每一关只新增一个关注点，配「目标 / 读什么 / 动手 / 检查点」四件套，深水区一律标注「用到再看」。综合了仓库源码实况（51 组 247 包）、官方文档体系与业界 agent 架构（Claude Code、Codex）的对照。按每天 2–3 小时的业余节奏约一个月走完；全职约两周。</p>
+  </header>
+
+  <div class="progress" id="progress">
+    <span>学习进度</span>
+    <div class="bar"><div class="fill" id="progress-fill"></div></div>
+    <span class="count" id="progress-count">0 / 9 关</span>
+  </div>
+
+  <!-- ══════════ 路线总览 ══════════ -->
+  <section id="roadmap">
+    <p class="secno">ROADMAP</p>
+    <h2>路线总览：九关三篇章</h2>
+    <p>先立世界观，再学会做实验，然后由地基（Cordis）到心脏（核心循环）到血肉（能力座），最后亲手写插件毕业。<strong>每关卡片右上角可勾选完成</strong>，进度存在你的浏览器里。</p>
+    <figure>
+      <div class="figwrap">
+        <svg class="dg" viewBox="0 0 900 400" role="img" aria-label="九个关卡的蛇形路线图：篇章一起步（世界观、跑起来、快照显微镜），篇章二地基与心脏（Cordis 七课、组装观、核心循环），篇章三进阶与毕业（能力座与安全、生态巡礼、毕业项目）">
+          <text x="40" y="34" class="phase">篇章 Ⅰ · 起步（约 2 天）</text>
+          <text x="40" y="154" class="phase">篇章 Ⅱ · 地基与心脏（约 1 周）</text>
+          <text x="40" y="274" class="phase">篇章 Ⅲ · 进阶与毕业（约 1–2 周）</text>
+          <polyline class="path" points="150,80 450,80 750,80 750,200 450,200 150,200 150,320 450,320 750,320"/>
+          <!-- 关 0-2 -->
+          <circle class="st" id="node-0" cx="150" cy="80" r="24"/><text class="stno" x="150" y="85" text-anchor="middle">0</text>
+          <text x="150" y="122" text-anchor="middle">世界观</text><text x="150" y="138" text-anchor="middle" class="sub">1–2 小时</text>
+          <circle class="st" id="node-1" cx="450" cy="80" r="24"/><text class="stno" x="450" y="85" text-anchor="middle">1</text>
+          <text x="450" y="122" text-anchor="middle">跑起来</text><text x="450" y="138" text-anchor="middle" class="sub">半天</text>
+          <circle class="st" id="node-2" cx="750" cy="80" r="24"/><text class="stno" x="750" y="85" text-anchor="middle">2</text>
+          <text x="750" y="122" text-anchor="middle">快照显微镜</text><text x="750" y="138" text-anchor="middle" class="sub">半天</text>
+          <!-- 关 3-5（右到左） -->
+          <circle class="st" id="node-3" cx="750" cy="200" r="24"/><text class="stno" x="750" y="205" text-anchor="middle">3</text>
+          <text x="750" y="242" text-anchor="middle">Cordis 七课</text><text x="750" y="258" text-anchor="middle" class="sub">1 天</text>
+          <circle class="st" id="node-4" cx="450" cy="200" r="24"/><text class="stno" x="450" y="205" text-anchor="middle">4</text>
+          <text x="450" y="242" text-anchor="middle">组装观</text><text x="450" y="258" text-anchor="middle" class="sub">半天–1 天</text>
+          <circle class="st" id="node-5" cx="150" cy="200" r="24"/><text class="stno" x="150" y="205" text-anchor="middle">5</text>
+          <text x="150" y="242" text-anchor="middle">核心循环</text><text x="150" y="258" text-anchor="middle" class="sub">2–3 天</text>
+          <!-- 关 6-8 -->
+          <circle class="st" id="node-6" cx="150" cy="320" r="24"/><text class="stno" x="150" y="325" text-anchor="middle">6</text>
+          <text x="150" y="362" text-anchor="middle">能力座与安全</text><text x="150" y="378" text-anchor="middle" class="sub">2 天</text>
+          <circle class="st" id="node-7" cx="450" cy="320" r="24"/><text class="stno" x="450" y="325" text-anchor="middle">7</text>
+          <text x="450" y="362" text-anchor="middle">生态巡礼</text><text x="450" y="378" text-anchor="middle" class="sub">2–3 天</text>
+          <circle class="st" id="node-8" cx="750" cy="320" r="24"/><text class="stno" x="750" y="325" text-anchor="middle">8</text>
+          <text x="750" y="362" text-anchor="middle">毕业项目 🎓</text><text x="750" y="378" text-anchor="middle" class="sub">2–4 天</text>
+        </svg>
+      </div>
+      <figcaption>路线设计原则：先能跑、再能改、最后能写。关 2 的快照回放是贯穿全程的实验回路——之后每一关的「动手」都靠它免费验证。</figcaption>
+    </figure>
+  </section>
+
+  <!-- ══════════ 篇章 Ⅰ ══════════ -->
+  <section id="phase1">
+    <p class="secno">篇章 Ⅰ · 起步</p>
+    <h2>先立世界观，再让它跑起来</h2>
+
+    <!-- 关 0 -->
+    <div class="stage" id="stage-0">
+      <div class="stage-head">
+        <span class="stage-badge">关 0</span>
+        <h3>世界观：所有 agent 框架共享的内核</h3>
+        <span class="stage-time">1–2 小时</span>
+        <label class="stage-done"><input type="checkbox" data-stage="0">完成</label>
+      </div>
+      <p class="goal">目标：在碰任何源码之前，握住业界共识的心智模型——<strong>agent harness = 除模型之外的一切</strong>：组装上下文、执行工具、记账（会话状态）、管安全（权限）。DSH、Claude Code、Codex 的内核同构。</p>
+      <h4>读什么</h4>
+      <ul>
+        <li><strong>本目录的 <a href="dsh-agent-loop.html">dsh-agent-loop.html</a></strong>，只读「00 · 内核」和第 1 遍——七行伪代码就是全部。</li>
+        <li><strong>Anthropic《Building Effective Agents》</strong>：workflows vs agents 的分界、保持简单、透明展示规划、精心设计工具接口。</li>
+        <li>Claude Code 官方文档《How the agent loop works》扫读：turn 的定义（一次「模型输出 + 工具执行 + 结果回填」往返）、权限三件套、上下文累积与自动压缩。</li>
+      </ul>
+      <h4>检查点（能回答再过关）</h4>
+      <ul>
+        <li>默写七行循环；说出循环何时终止（模型不再发工具调用）。</li>
+        <li>harness 四件事分别是什么？为什么说「LLM 是 agent 系统里最小的部分」？</li>
+        <li>Claude Code 的 PreToolUse/PostToolUse hooks、只读工具并发执行，分别对应 DSH 的什么？（答案在关 5、关 6 揭晓，先带着问题走。）</li>
+      </ul>
+      <details class="deep"><summary>深水区 · 用到再看</summary>
+        <ul>
+          <li>论文《Dive into Claude Code》（arxiv 2604.14228）：对 Claude Code 设计空间的学术拆解。</li>
+          <li>《How Codex is built》（Pragmatic Engineer）：Codex 把 harness 做成一个 Rust 共享库、CLI/IDE/Web 四端复用——和 DSH 的「一套包、多个 profile」是同一思路。</li>
+        </ul>
+      </details>
+    </div>
+
+    <!-- 关 1 -->
+    <div class="stage" id="stage-1">
+      <div class="stage-head">
+        <span class="stage-badge">关 1</span>
+        <h3>跑起来：亲手跑一次任务，找到它的账本</h3>
+        <span class="stage-time">半天</span>
+        <label class="stage-done"><input type="checkbox" data-stage="1">完成</label>
+      </div>
+      <p class="goal">目标：跑通 Web UI 和 headless 两条路径，亲眼看到一次运行在磁盘上留下的会话日志，并在 Trajectory 页认出事件流。</p>
+      <h4>动手</h4>
+      <div class="cmd"><pre><span class="c"># 前置：Node ^22.19 或 ≥24；DEEPSEEK_API_KEY 写进仓库根 .env（跑真模型需要）</span>
+pnpm install
+pnpm run build          <span class="c"># tsc → tsdown → vite，首次必须完整构建</span>
+pnpm dsh web            <span class="c"># http://127.0.0.1:3080，界面里配模型、选工作区、跑一个小任务</span>
+<span class="c"># 或者命令行一把梭：</span>
+pnpm dsh --profile headless "用一句话介绍这个仓库"</pre></div>
+      <ul>
+        <li>跑完后看 <code>~/.dsh/sessions/</code>：按规范化工作目录分文件夹，里面每个 <code>session-&lt;uuid&gt;/session.jsonl.zstd</code> 就是一次会话的完整账本（默认 zstd 压缩）。</li>
+        <li>回到 Web UI 打开 <strong>Trajectory（轨迹）标签页</strong>：它把账本摊开成 User / Assistant / Tool 记录，粗线是 turn 边界，还有时序总览（TTFT vs 解码）。这是理解 loop 最好的可视化入口。</li>
+      </ul>
+      <h4>检查点</h4>
+      <ul>
+        <li>会话文件的路径规律是什么？web 和 headless 是不是同一个引擎？（是——同一批包，不同 profile。）</li>
+        <li>Trajectory 里一次工具调用显示了哪些信息（输入、输出、耗时、token）？</li>
+      </ul>
+      <div class="note"><b>本机备忘</b>（你踩过的坑）：更新代码走 <code>git sync-diy</code>，别手动动分支；同步上游后先 <code>pnpm run clean</code> 再 build；npm registry 用 npmmirror。</div>
+      <details class="deep"><summary>深水区 · 用到再看</summary>
+        <ul>
+          <li><code>apps/cli/reference/README.md</code>：全部 flag（--port / --trusted-host / --no-open / --patch / --dump-config）。</li>
+          <li>SSH 环境下只打印 URL 不自动开浏览器；刻意不支持 <code>--host 0.0.0.0</code>。</li>
+          <li>文档双轨：产品向 <code>docs/user/guide/index.md</code>，贡献者向 <code>docs/development.md</code>（Setup tutorial 节）。</li>
+        </ul>
+      </details>
+    </div>
+
+    <!-- 关 2 -->
+    <div class="stage" id="stage-2">
+      <div class="stage-head">
+        <span class="stage-badge">关 2</span>
+        <h3>快照显微镜：不花钱、几秒钟重放真实会话</h3>
+        <span class="stage-time">半天</span>
+        <label class="stage-done"><input type="checkbox" data-stage="2">完成</label>
+      </div>
+      <p class="goal">目标：掌握全课程最重要的实验回路。快照测试从真实 <code>dsh</code> CLI 起进程，只有模型是回放的——工具、沙箱、持久化全是真的。之后每一关的「动手」都靠它验证。</p>
+      <h4>动手</h4>
+      <div class="cmd"><pre>pnpm run test:snapshot -t text-turn     <span class="c"># 只跑一个场景，几秒出结果，不需要 API key</span>
+pnpm dsh --profile headless --dump-config   <span class="c"># 不启动，纯打印合成后的插件树</span></pre></div>
+      <ul>
+        <li>解剖 <code>snapshots/session/text-turn/</code>：<code>snapshot.yml</code>（清单）、<code>cordis.yml</code>（场景专属组合补丁，覆盖了 <code>compression: none</code> 所以 fixture 可直接读）、<strong><code>session.jsonl</code>——既是回放输入（模型脚本）又是期望输出</strong>，一物两用是整套机制的核心。</li>
+        <li>逐行读这份 <code>session.jsonl</code>，把 <code>turn/start → user/message → assistant/chunk → assistant/message → turn/end</code> 认一遍。</li>
+        <li>进阶：故意改坏 expected 里一个字，重跑看测试怎么红，再还原。</li>
+      </ul>
+      <h4>检查点</h4>
+      <ul>
+        <li>replay 模式为什么不需要 key？（<code>dsh-llm-replay</code> 适配器把日志里的 <code>assistant/chunk</code> 重组成流。）</li>
+        <li>快照树四个子树各走什么入口？（session→headless、sdk、acp、web→需 Chromium+build。）</li>
+      </ul>
+      <details class="deep"><summary>深水区 · 用到再看</summary>
+        <ul>
+          <li><code>snapshots/AGENTS.md</code>：这棵树的完整规则；<code>replay.override.json</code> 用于日志重建不出的情形（中途报错、取消、挂起）。</li>
+          <li><code>pnpm run mock:llm</code>：可脚本化的 OpenAI 兼容故障服务器（限流、断流、畸形 chunk），练重试/超时用。</li>
+          <li>录制与刷新：<code>test:snapshot:record</code>（要 key）/ <code>test:snapshot:refresh</code>（不要）。</li>
+        </ul>
+      </details>
+    </div>
+  </section>
+
+  <!-- ══════════ 篇章 Ⅱ ══════════ -->
+  <section id="phase2">
+    <p class="secno">篇章 Ⅱ · 地基与心脏</p>
+    <h2>Cordis 物理定律 → 组装观 → 核心循环</h2>
+
+    <!-- 关 3 -->
+    <div class="stage" id="stage-3">
+      <div class="stage-head">
+        <span class="stage-badge">关 3</span>
+        <h3>Cordis 七课：一切皆插件的物理定律</h3>
+        <span class="stage-time">1 天</span>
+        <label class="stage-done"><input type="checkbox" data-stage="3">完成</label>
+      </div>
+      <p class="goal">目标：学会这个仓库的框架语言。<code>docs/architecture.md</code> 开篇就写「它假定你已懂 Cordis」——不过这一关，后面每个包都读不动。</p>
+      <h4>读什么 + 动手（合一）</h4>
+      <ul>
+        <li><strong><code>docs/cordis-primer.md</code></strong>（45 行，全仓性价比最高的一页）：五个核心想法、dispatch 五模式对照表、<strong>waterfall 必须调 <code>next()</code> 才算放行</strong>。</li>
+        <li><strong>跟完 <code>docs/cordis-tutorial/</code> 七章动手教程</strong>（全程无需 key，在临时目录写代码）：01 第一个插件 → 02 生命周期与 effect → 03 服务 → 04 事件 → 05 配置 → 06 组合与 HMR → 07 把你的工具注册进真实 harness 的 <code>ctx.tools</code>。</li>
+        <li>收尾看一眼仓库根的 <code>scratch-plugin/</code>——你之前照 <code>docs/user/develop/basic/</code> 写过的插件，正好复习插件四件事：<code>apply</code> / <code>inject</code> / 注册 / <code>ctx.effect</code> 清理。</li>
+      </ul>
+      <h4>检查点</h4>
+      <ul>
+        <li>五个核心想法各用一句话说出（插件实现 Service / context 是服务仓库 / inject 声明依赖 / 事件靠声明合并 / 注册即可逆 effect）。</li>
+        <li>waterfall 监听器不调 <code>next()</code> 会发生什么？为什么每个注册都要返回 disposer？</li>
+        <li>emit / waterfall / parallel / serial / bail 五种 dispatch 的区别。</li>
+      </ul>
+      <details class="deep"><summary>深水区 · 用到再看</summary>
+        <ul>
+          <li><code>docs/cordis-api/</code>（context / fiber / service / registry / events）：生成参考，当字典。</li>
+          <li><code>vendor/README.md</code>：9 个 vendored Cordis 包、rescope 规则、18 条本地修改日志（第 6 条 fiber 生命周期加固值得一读）。</li>
+        </ul>
+      </details>
+    </div>
+
+    <!-- 关 4 -->
+    <div class="stage" id="stage-4">
+      <div class="stage-head">
+        <span class="stage-badge">关 4</span>
+        <h3>组装观：你跑的 dsh 是怎么拼出来的</h3>
+        <span class="stage-time">半天–1 天</span>
+        <label class="stage-done"><input type="checkbox" data-stage="4">完成</label>
+      </div>
+      <p class="goal">目标：看懂 profile → bundle → patch 的五层叠加，从此对「这个部署里有什么」有掌控感。</p>
+      <h4>读什么</h4>
+      <ul>
+        <li><strong><code>docs/architecture.md</code> 全文</strong>（143 行，中枢地图）：重点是 profile/bundle 节、事件三域、结尾的「新行为该挂哪」映射表——以后做任何改动都会反复查这张表。</li>
+        <li><strong><code>packages/bundle/base/cordis.patch.yml</code></strong>：86 个插件的真实主体，按功能分组扫一遍（LLM / 核心 / 持久化 / 沙箱审批 / 工具 / 子代理 / 上下文管理 / 命令）。再看 <code>headless/cordis.patch.yml</code>（30 行）体会「headless = base + 5 行差量」。</li>
+        <li>profile 不在仓库里，在 <code>~/.dsh/profiles/&lt;name&gt;/</code>：空根 <code>cordis.yml</code>（别改）+ <code>cordis.patch.yml</code>（你的层）。五个模板：web / headless / sdk / sdk-minimal / acp。</li>
+      </ul>
+      <h4>动手</h4>
+      <ul>
+        <li>编辑 <code>~/.dsh/profiles/web/cordis.patch.yml</code>，把某个工具（比如 <code>tool-todo</code>）disable，重启 <code>pnpm dsh web</code>，观察模型工具表少了 <code>todo_write</code>；再改回来。</li>
+        <li>对比 <code>--dump-config</code> 与 <code>--dump-default-config</code> 的差异，找到你自己 patch 层的痕迹。</li>
+      </ul>
+      <h4>检查点</h4>
+      <ul>
+        <li>背出五层叠加顺序：profile 空根 ← bundles（按序）← profile 用户层 ← home 层 ← <code>--patch</code>。</li>
+        <li>web 与 headless 的差集是什么？（host HTTP 层 + 整排 <code>client-ui-*</code>；headless 无任何 UI，审批 fail-closed。）</li>
+      </ul>
+      <details class="deep"><summary>深水区 · 用到再看</summary>
+        <ul>
+          <li>启动链源码：<code>apps/cli/src/bin.ts → args.ts → profile-boot.ts → packages/boot/app-boot</code>；launcher 只解析自己的 flag，其余原样透传给 app。</li>
+          <li><code>settings.yaml</code>（热重载的用户设置）与 <code>cordis.patch.yml</code>（组合层）的分工；<code>credentials</code> 按名引用密钥。</li>
+        </ul>
+      </details>
+    </div>
+
+    <!-- 关 5 -->
+    <div class="stage" id="stage-5">
+      <div class="stage-head">
+        <span class="stage-badge">关 5</span>
+        <h3>核心循环：逐包吃透六个脊柱包</h3>
+        <span class="stage-time">2–3 天（本课程的心脏）</span>
+        <label class="stage-done"><input type="checkbox" data-stage="5">完成</label>
+      </div>
+      <p class="goal">目标：把 <a href="dsh-agent-loop.html">图解页</a> 从「看过」变成「能复述」。六个包按依赖方向排好了学习顺序，每个先读 README，再读 <code>src/</code>。</p>
+      <h4>读什么（顺序即路线）</h4>
+      <ul>
+        <li><strong>① <code>core/session</code></strong>（3234 行）：唯一真相源。先接受反直觉设定——消息历史是从日志<em>派生</em>的（<code>deriveMessages()</code>），日志才是本体。replay、压缩、fork 全靠它讲通。</li>
+        <li><strong>② <code>llm/llm</code></strong>（只读类型）：<code>Message</code> / <code>ContentBlock</code> / <code>StreamChunk</code>——循环里流动的数据词汇，全仓共用。</li>
+        <li><strong>③ <code>core/system-prompt</code></strong>（656 行，两个文件，性价比最高）：每步之前模型看到的东西怎么拼。</li>
+        <li><strong>④ <code>core/tools</code></strong>（5652 行，最密）：<code>defineTool</code> + 受保护执行流水线。配生成图 <code>docs/tool-execution-pipeline.md</code> 和图解页第 4–5 图读。</li>
+        <li><strong>⑤ <code>core/agent</code></strong>：<code>Agent</code> 句柄与 <code>agent/*</code> 事件——以后写插件真正编程面对的契约层，对 loop 零依赖，可单读。</li>
+        <li><strong>⑥ <code>core/agent-loop</code></strong>（1691 行）：把①–⑤串起来的唯一具体循环。对照 <code>docs/architecture.md#turn-flow</code> 的 30 行伪代码收官。</li>
+      </ul>
+      <h4>动手</h4>
+      <ul>
+        <li>拿关 2 的 <code>text-turn/session.jsonl</code>，逐事件标注它对应图解页哪个节点。</li>
+        <li>挑一个多工具调用的快照场景跑，验证「执行可重叠、提交按模型顺序」。</li>
+        <li>在 <code>agent-loop</code> 里临时加一行日志，跑快照观察时序（记得还原）。</li>
+      </ul>
+      <h4>检查点</h4>
+      <ul>
+        <li>「模型可见 ⟺ 已落日志」这条铁律的因与果；<code>TurnEndReason</code> 有哪几种。</li>
+        <li><code>isConcurrencySafe</code> 为什么 fail-closed？四个 waterfall 挂点（<code>agent/pre-step</code>、<code>agent/request</code>、<code>tools/pre-execute</code>、<code>tools/post-execute</code>）各拦什么？</li>
+        <li>关 0 留的问题现在能答了：Claude Code 的 PreToolUse/PostToolUse ≈ DSH 的 tools/pre-execute、post-execute；「只读工具并发」≈ <code>isConcurrencySafe</code>。</li>
+      </ul>
+      <details class="deep"><summary>深水区 · 用到再看</summary>
+        <ul>
+          <li><code>core/scope</code>（562 行）：tools/agents/commands 所有「每 agent 隔离注册表」背后的同一原语。</li>
+          <li><code>agent-tool-presentation</code> 与 PTC 模式（工具收拢成 <code>run_code</code> 程序调用）。</li>
+          <li>子系统参考页当字典：<code>docs/subsystems/core.md</code>（1128 行）、<code>session.md</code>、<code>tools.md</code>、<code>llm-streaming.md</code>。</li>
+        </ul>
+      </details>
+    </div>
+  </section>
+
+  <!-- ══════════ 篇章 Ⅲ ══════════ -->
+  <section id="phase3">
+    <p class="secno">篇章 Ⅲ · 进阶与毕业</p>
+    <h2>能力座、生态，然后自己写一个</h2>
+
+    <!-- 关 6 -->
+    <div class="stage" id="stage-6">
+      <div class="stage-head">
+        <span class="stage-badge">关 6</span>
+        <h3>能力座与安全：吃透一个 seam，推得动二十个</h3>
+        <span class="stage-time">2 天</span>
+        <label class="stage-done"><input type="checkbox" data-stage="6">完成</label>
+      </div>
+      <p class="goal">目标：掌握全仓复用最多的形状——capability seam 三角色（Service Definition / Provider / Consumer）。fs、shell、web、lsp、terminal、skill、subagent、compaction 全是同一形状。</p>
+      <h4>读什么</h4>
+      <ul>
+        <li><strong><code>docs/glossary.md</code></strong>（45 行）：钉死 seam / scope / turn-step-round 术语，不读会一路误用。</li>
+        <li><strong>以 <code>packages/fs/</code> 为模板走三角</strong>：<code>fs</code>（Definition，契约）→ <code>fs-local</code> / <code>fs-sandbox</code>（Provider，后端）→ <code>tool-fs</code>（Consumer，模型工具），外加 <code>fs-observation-policy</code>（「策略也是独立包」的范例）。</li>
+        <li>对照 <code>packages/shell/</code> 验证同构：<code>shell → bash-local → tool-bash</code>；它的 request/spec 拆分是「显式 resolve、拒绝隐藏默认值」的仓库模板。</li>
+        <li>安全链：<code>sandbox-policy</code> 三档（read-only / workspace-write / danger-full-access）、<code>user-approval</code>（headless 无 answerer 时 fail-closed 成 unavailable）、<code>permission-presets</code>、<code>guard/</code> 两个小守卫。</li>
+      </ul>
+      <h4>动手</h4>
+      <ul>
+        <li>从 <code>tool-fs</code> 的 <code>execute</code> 往下追一次 read 的调用栈到 <code>fs-local</code>，画出三角色依赖箭头。</li>
+        <li>把 profile 的 sandbox 模式改成 <code>read-only</code>，跑一个要写文件的任务，观察拒绝如何以工具结果的形式回给模型（而不是崩溃）。</li>
+        <li>跑 <code>snapshots/acp/</code> 的 escalation 场景，看审批回路怎么走。</li>
+      </ul>
+      <h4>检查点</h4>
+      <ul>
+        <li>三角色各在哪个包？依赖方向是什么？「扩展插件只依赖 Definition、绝不依赖 Provider」为什么是铁律？</li>
+        <li>headless 下审批为什么确定性拒绝？<code>DSH_PERMISSION_MODE=danger-full-access</code> 改变了什么？</li>
+      </ul>
+      <details class="deep"><summary>深水区 · 用到再看</summary>
+        <ul>
+          <li><code>subprocess/</code>：所有子进程的唯一入口（可执行查找、有界输出、整树终止）。</li>
+          <li>沙箱三平台后端：Linux bwrap/Landlock（<code>native/landlock-run</code>）、macOS Seatbelt、Windows 受限令牌。</li>
+          <li><code>docs/subsystems/approval.md</code>、<code>sandbox.md</code>、<code>shell.md</code>、<code>filesystem.md</code>。</li>
+        </ul>
+      </details>
+    </div>
+
+    <!-- 关 7 -->
+    <div class="stage" id="stage-7">
+      <div class="stage-head">
+        <span class="stage-badge">关 7</span>
+        <h3>生态巡礼：知道每样东西是什么、在哪、何时用</h3>
+        <span class="stage-time">2–3 天（广度游，只读 README）</span>
+        <label class="stage-done"><input type="checkbox" data-stage="7">完成</label>
+      </div>
+      <p class="goal">目标：对 51 个包组建立「索引级」认知——不求深读，求遇到需求能说出「这归哪个包管」。</p>
+      <h4>读什么（每项只读 README + 跑一个对应快照）</h4>
+      <ul>
+        <li><strong>编排</strong>：<code>subagent/</code>（一个契约、多个 provider：进程内 spawn/fork + 外进程 ACP/Codex/Claude Code/SDK）、<code>workflow/</code>（模型写脚本 fan-out）、<code>goal / plan / todo / jobs / schedule</code>。</li>
+        <li><strong>上下文管理</strong>：<code>compaction/</code>（压缩遮蔽 surface、不删日志）+ <code>spill/</code>（超大输出外溢成预览+定位符）+ <code>context/</code> 注入组。</li>
+        <li><strong>检索与技能</strong>：<code>session-query/</code>（FTS5 全文检索 + /export）、<code>skill/</code>。</li>
+        <li><strong>对外四条口</strong>：<code>sdk/</code>（私有 JSON-RPC，功能全，Python SDK 是其设计孪生）vs <code>acp/</code>（业界标准 Agent Client Protocol，automation-only）vs <code>mcp/</code>（只桥接 MCP Tools 能力）vs <code>hooks/</code>（直接兼容 Claude Code / Codex 的 shell hooks）。</li>
+      </ul>
+      <h4>动手</h4>
+      <ul>
+        <li>跑 <code>snapshots/sdk/</code> 与 <code>snapshots/acp/</code> 各一个场景（keyless）。</li>
+        <li>（有 key）跑 <code>python/sdk/examples/minimal.py</code>，体会「把 harness 当子进程驱动」。</li>
+        <li>在 Web UI 里用一次 <code>/compact</code>，再去 Trajectory 看压缩前后模型可见历史的变化。</li>
+      </ul>
+      <h4>检查点</h4>
+      <ul>
+        <li>SDK 与 ACP 一句话区别；MCP 桥只支持什么能力？</li>
+        <li>compaction 为什么「遮蔽而不删除」？（日志是本体，surface 才是模型视野。）</li>
+      </ul>
+      <details class="deep"><summary>深水区 · 用到再看</summary>
+        <ul>
+          <li><strong>Web GUI 三件套</strong>（除非任务就是改 UI，否则别早读）：<code>client/</code> 43 包 slot 系统（全仓最大，7.9 万行）、<code>api/</code> Remote BFF、<code>typert/</code> 构建期类型生成。</li>
+          <li><code>experimental/</code>（8 包 3.3 万行，无稳定承诺）与 <code>e2b/</code>（POC）：明确不该早读。</li>
+          <li><code>extensions/</code> 自修改子系统：运行中的 agent 改自己的 runtime，概念上依赖全部 Cordis 知识。</li>
+        </ul>
+      </details>
+    </div>
+
+    <!-- 关 8 -->
+    <div class="stage" id="stage-8">
+      <div class="stage-head">
+        <span class="stage-badge">关 8</span>
+        <h3>毕业项目：写一个带配置的工具插件</h3>
+        <span class="stage-time">2–4 天</span>
+        <label class="stage-done"><input type="checkbox" data-stage="8">完成</label>
+      </div>
+      <p class="goal">目标：从读者变作者。做到「能进 PR 的完成度」：工具可用、有 keyless 快照、懂门禁。</p>
+      <h4>路线</h4>
+      <ul>
+        <li><strong>沿官方教程链</strong>：<code>docs/user/develop/basic/index.md → tool.md → config.md</code>（你的 <code>scratch-plugin/</code> 已是半成品起点），可选 <code>publish.md</code> 打成 bundle 用 <code>dsh plugin add</code> 安装。</li>
+        <li>对照 <code>docs/cookbook/adding-a-tool.md</code>（参考手册）与生产级范例 <code>packages/shell/tool-bash</code>。</li>
+        <li>提交前三篇必读：<code>docs/testing.md</code>（何时必须加快照）、<code>packages/AGENTS.md</code>（插件导出形态等硬规则）、<code>docs/postmortem/0001</code>（default export 吃掉 inject 的血案——两条硬规则的来历）。</li>
+      </ul>
+      <h4>动手（建议选题）</h4>
+      <ul>
+        <li>实现一个小工具（例：查询本机系统信息 / 调一个公开 API），schema 从模型视角写——不含 UI、传输、实现词汇。</li>
+        <li>在 Web UI 验证可见、可调用、结果卡片正常。</li>
+        <li>给它配一个快照场景（record 需 key，或参照现有场景手写 fixture），<code>pnpm run test:snapshot -t 你的场景</code> 跑绿。</li>
+      </ul>
+      <h4>检查点（毕业答辩）</h4>
+      <ul>
+        <li>说出 <code>execute</code> 契约的要点；你的工具在 PTC 模式下会发生什么？</li>
+        <li>仓库三条硬门禁：非平凡改动同 PR 附 Agent Note、模型/产品可见变更配 keyless 快照、改 GUI 的 PR 附 GIF。</li>
+      </ul>
+      <details class="deep"><summary>深水区 · 继续深造的方向</summary>
+        <ul>
+          <li>加一个 LLM adapter（<code>docs/cookbook/adding-an-llm-adapter.md</code>，范例 <code>llm-deepseek</code> / <code>llm-pi-ai</code>）。</li>
+          <li>加一个完整的包（<code>docs/cookbook/adding-a-package.md</code> 五步清单 + Model Experience README 格式）。</li>
+          <li>给 Web UI 加一张 settings card（<code>adding-a-settings-card.md</code>，不用改仓库任何代码）。</li>
+        </ul>
+      </details>
+    </div>
+  </section>
+
+  <!-- ══════════ 对照表 ══════════ -->
+  <section id="compare">
+    <p class="secno">CROSS-REFERENCE</p>
+    <h2>概念对照：DSH ↔ Claude Code ↔ Codex</h2>
+    <p>学 DSH 不是学一个孤例——下表把三家 harness 的同构部件对齐。左列是通用概念，学完本课程你应该能逐行讲出「为什么大家都这么设计」。</p>
+    <div class="tblwrap"><table>
+      <tr><th>通用概念</th><th>DSH（本仓库）</th><th>Claude Code</th><th>Codex</th></tr>
+      <tr><td>内核循环</td><td><code>core/agent-loop</code> 的 turn/step</td><td>agentic loop，turn = 模型往返+工具</td><td>Rust core 里的状态机 loop</td></tr>
+      <tr><td>上下文组装</td><td><code>system-prompt</code> 分段装配 + <code>deriveMessages()</code> 全量投影</td><td>system prompt + CLAUDE.md + 工具定义 + 历史累积</td><td>面向 prompt cache 的线性上下文管理</td></tr>
+      <tr><td>会话持久化</td><td>追加式 <code>session.jsonl</code>（唯一真相源，可 resume/fork）</td><td>session id + resume / fork</td><td>thread 生命周期：create / resume / fork / archive</td></tr>
+      <tr><td>工具执行门</td><td><code>tools/pre-execute</code>（allow/deny/ask）+ guards</td><td>PreToolUse hook + permission rules/modes</td><td>sandboxed tool execution + approval</td></tr>
+      <tr><td>结果后处理</td><td><code>tools/post-execute</code>（替换/拦截/spill 外溢）</td><td>PostToolUse hook</td><td>—（core 内建）</td></tr>
+      <tr><td>并发工具调用</td><td><code>isConcurrencySafe(args)===true</code> 才并行，fail-closed</td><td>只读工具并发、写状态工具串行（readOnlyHint）</td><td>并行 tool calls</td></tr>
+      <tr><td>长对话压缩</td><td><code>compaction/</code> 遮蔽 surface、日志不动</td><td>自动 compaction + PreCompact hook</td><td>automatic context compaction</td></tr>
+      <tr><td>扩展机制</td><td>Cordis 插件 + waterfall 挂点 + profile patch</td><td>hooks / skills / subagents / MCP</td><td>config + MCP</td></tr>
+      <tr><td>多端复用一套核</td><td>一套包 × 五个 profile（web/headless/sdk/sdk-minimal/acp）</td><td>CLI / IDE / Web / SDK 共用一个引擎</td><td>一个 Rust 库 × CLI/IDE/Web/桌面</td></tr>
+      <tr><td>对外协议</td><td>SDK（私有 JSON-RPC）+ ACP（标准）+ MCP 桥 + hooks 兼容层</td><td>Agent SDK（TS/Python）+ MCP</td><td>协议层 crates + MCP</td></tr>
+    </table></div>
+  </section>
+
+  <!-- ══════════ 方法论 ══════════ -->
+  <section id="method">
+    <p class="secno">METHOD</p>
+    <h2>学习方法论：怎么读这个仓库</h2>
+    <h3>读一个包的固定套路</h3>
+    <p>① 包 README（含 Model Experience 节：它对模型/token/KV cache 的影响）→ ② 对应 <code>docs/subsystems/</code> 页（类型与语义的权威定义）→ ③ <code>src/types.ts</code>（纯类型）→ ④ <code>src/index.ts</code> → ⑤ <code>tests/</code>（行为即文档）。</p>
+    <h3>三类文档，三种用法</h3>
+    <ul>
+      <li><strong>叙事文档通读</strong>：architecture / cordis-primer / glossary / testing —— 本地图已排进关卡。</li>
+      <li><strong>生成文档当字典，严禁通读</strong>：<code>config-catalog</code>（3546 行）、<code>tool-catalog</code>（2279 行）、<code>module-graph</code>（1958 行）、<code>persistence-catalog</code>、<code>capability-seams</code>、<code>docs/cordis-api/</code>。</li>
+      <li><strong>查「为什么」翻 <code>.agents/notes/</code></strong>：600+ 篇 implemented 决策记录，每篇强制写 Alternatives considered——想知道某个设计打败了什么方案，答案都在这。战争故事看 <code>docs/postmortem/</code>（5 篇）。</li>
+    </ul>
+    <h3>命令速查</h3>
+    <div class="tblwrap"><table>
+      <tr><th>命令</th><th>用途</th><th>要 key?</th></tr>
+      <tr><td><code>pnpm dsh web</code></td><td>Web UI（127.0.0.1:3080），唯一的人机界面</td><td>要</td></tr>
+      <tr><td><code>pnpm dsh --profile headless "任务"</code></td><td>命令行跑一次任务</td><td>要</td></tr>
+      <tr><td><code>pnpm run test:snapshot -t 场景名</code></td><td>回放一个录制会话（全课程实验回路）</td><td><strong>不要</strong></td></tr>
+      <tr><td><code>pnpm dsh --profile X --dump-config</code></td><td>不启动，打印合成插件树</td><td>不要</td></tr>
+      <tr><td><code>pnpm run test / typecheck / build</code></td><td>单测 / 类型检查 / 构建</td><td>不要</td></tr>
+      <tr><td><code>pnpm run mock:llm</code></td><td>可脚本化的故障 LLM 服务器</td><td>不要</td></tr>
+    </table></div>
+  </section>
+
+  <!-- ══════════ 参考 ══════════ -->
+  <section id="refs">
+    <p class="secno">REFERENCES</p>
+    <h2>参考资料</h2>
+    <h3>仓库内（按重要度）</h3>
+    <ul class="refs">
+      <li><code>AGENTS.md</code>（根，= CLAUDE.md）· <code>docs/architecture.md</code> · <code>docs/cordis-primer.md</code> · <code>docs/glossary.md</code> · <code>docs/testing.md</code> · <code>docs/cordis-tutorial/</code> · <code>docs/user/develop/basic/</code> · <code>snapshots/AGENTS.md</code> · <code>packages/README.md</code> + <code>packages/AGENTS.md</code></li>
+      <li>本目录：<a href="dsh-agent-loop.html">dsh-agent-loop.html</a>（Agent Loop 图解，本课程的伴读教材）</li>
+    </ul>
+    <h3>外部（本计划引用的公开资料）</h3>
+    <ul class="refs">
+      <li><a href="https://www.anthropic.com/engineering/building-effective-agents">Anthropic — Building Effective Agents</a> · <a href="https://www.anthropic.com/engineering/writing-tools-for-agents">Writing effective tools for AI agents</a></li>
+      <li><a href="https://code.claude.com/docs/en/agent-sdk/agent-loop">Claude Code Docs — How the agent loop works</a> · <a href="https://blog.promptlayer.com/claude-code-behind-the-scenes-of-the-master-agent-loop/">PromptLayer — Claude Code Master Agent Loop</a> · <a href="https://arxiv.org/html/2604.14228v1">arXiv — Dive into Claude Code</a></li>
+      <li><a href="https://newsletter.pragmaticengineer.com/p/how-codex-is-built">Pragmatic Engineer — How Codex is built</a> · <a href="https://codex.danielvaughan.com/2026/03/28/codex-rs-rust-rewrite-architecture/">The codex-rs Architecture</a></li>
+      <li>Agent harness 概念：<a href="https://www.firecrawl.dev/blog/what-is-an-agent-harness">Firecrawl — What Is an Agent Harness?</a> · <a href="https://www.databricks.com/blog/ai-harness">Databricks — What is an AI Agent Harness?</a> · <a href="https://www.mongodb.com/company/blog/technical/agent-harness-why-llm-is-smallest-part-of-your-agent-system">MongoDB — The Agent Harness</a></li>
+    </ul>
+    <p style="color:var(--muted);font-size:13.5px;margin-top:18px">本地图基于 2026-08-30 的 diy 分支源码实况编制（51 组 / 247 包；核心数字与文件路径均经代码核对）。仓库演进后若发现路径失效，以 <code>packages/README.md</code> 与 <code>docs/architecture.md</code> 为准。</p>
+  </section>
+</main>
+
+<script>
+(function () {
+  var TOTAL = 9;
+  var KEY = 'dsh-learning-progress';
+  function load() {
+    try {
+      var raw = localStorage.getItem(KEY);
+      var arr = raw ? JSON.parse(raw) : [];
+      return Array.isArray(arr) ? arr : [];
+    } catch (e) { return []; }
+  }
+  function save(arr) {
+    try { localStorage.setItem(KEY, JSON.stringify(arr)); } catch (e) { /* 私密窗口等场景静默降级 */ }
+  }
+  function render(arr) {
+    var done = 0;
+    for (var i = 0; i < TOTAL; i++) {
+      var on = !!arr[i];
+      if (on) done++;
+      var box = document.querySelector('input[data-stage="' + i + '"]');
+      if (box) box.checked = on;
+      var node = document.getElementById('node-' + i);
+      if (node) node.classList.toggle('done', on);
+    }
+    var fill = document.getElementById('progress-fill');
+    var count = document.getElementById('progress-count');
+    if (fill) fill.style.width = (done / TOTAL * 100) + '%';
+    if (count) count.textContent = done + ' / ' + TOTAL + ' 关' + (done === TOTAL ? ' · 毕业 🎓' : '');
+  }
+  var state = load();
+  render(state);
+  document.querySelectorAll('input[data-stage]').forEach(function (box) {
+    box.addEventListener('change', function () {
+      state[Number(box.dataset.stage)] = box.checked;
+      save(state);
+      render(state);
+    });
+  });
+})();
+</script>
